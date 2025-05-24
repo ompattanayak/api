@@ -17,9 +17,9 @@ def read_root():
 @app.get("/api")
 def get_marks(name: List[str] = Query([])):
     name_set = set(name)
-    
+    return {"message": "123"}
     # Filter matching names
-    name_to_data = {entry["name"]: entry for entry in student_data}
-    result = [name_to_data[n] for n in name if n in name_to_data]
+    # name_to_data = {entry["name"]: entry for entry in student_data}
+    # result = [name_to_data[n] for n in name if n in name_to_data]
 
-    return result
+    # return result
