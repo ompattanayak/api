@@ -1,25 +1,25 @@
-# main.py
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Query
 from typing import List
-from fastapi.responses import JSONResponse
 import json
+import os
 
 app = FastAPI()
 
-# Load JSON data once when the app starts
-with open("q-vercel-python.json", "r") as file:
-    student_data = json.load(file)
+# Load data on startup
+file_path = os.path.join(os.path.dirname(__file__), "q-vercel-python.json")
+with open(file_path, "r") as f:
+    student_data = json.load(f)
 
 @app.get("/")
 def read_root():
     return {"message": "Hello, World!"}
 
 @app.get("/api")
-def get_marks(name: List[str] = []):
+def get_marks(name: List[str] = Query([])):
     name_set = set(name)
-    filtered_students = [entry for entry in student_data if entry["name"] in name_set]
     
-    # Maintain the order from query
-    ordered_result = [next(item for item in filtered_students if item["name"] == n) for n in name if any(item["name"] == n for item in filtered_students)]
+    # Filter matching names
+    name_to_data = {entry["name"]: entry for entry in student_data}
+    result = [name_to_data[n] for n in name if n in name_to_data]
 
-    return JSONResponse(content=ordered_result)
+    return result
